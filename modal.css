@@ -1,0 +1,324 @@
+.bookmark-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999999;
+  display: none;
+}
+
+.bookmark-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000000;
+}
+
+.bookmark-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.bookmark-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.bookmark-close {
+  cursor: pointer;
+  font-size: 24px;
+  color: #666;
+}
+
+.bookmark-section {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.bookmark-section h3 {
+  margin: 0;
+  color: #444;
+  font-size: 14px;
+}
+
+.bookmark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.bookmark-item {
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bookmark-item:hover {
+  background: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.bookmark-item.dragging {
+  opacity: 0.5;
+  background: #f8f8f8;
+  cursor: move;
+}
+
+.bookmark-item.drag-over {
+  border: 2px dashed #4CAF50;
+}
+
+.bookmark-drag-hint {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  font-size: 11px;
+  color: #666;
+  opacity: 0.7;
+}
+
+.bookmark-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+}
+
+.bookmark-url {
+  color: #666;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.bookmark-button {
+  padding: 12px 24px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  text-align: center;
+  line-height: 20px;
+  height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bookmark-button:hover {
+  background: #45a049;
+}
+
+.bookmark-input-group {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.bookmark-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 0;
+  font-size: 14px;
+  transition: all 0.3s;
+  line-height: 20px;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.bookmark-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.bookmark-original-title {
+  color: #999;
+  font-size: 11px;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: italic;
+  text-align: center;
+}
+
+.note-panel {
+  position: fixed;
+  right: 0;
+  top: 20px;
+  width: 350px;
+  height: calc(100vh - 40px);
+  background: white;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  z-index: 999998;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px 0 0 8px;
+  resize: horizontal;
+  overflow: auto;
+  min-width: 250px;
+  max-width: 800px;
+}
+
+.note-header {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  box-sizing: border-box;
+  cursor: move;
+  user-select: none;
+  background: #f8f8f8;
+}
+
+.note-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  line-height: 20px;
+}
+
+.note-close {
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.note-content {
+  flex: 1;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-textarea {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.note-textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.note-save {
+  padding: 10px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+  height: 40px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.note-save:hover {
+  background: #45a049;
+}
+
+.note-toolbar {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.note-link-btn {
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s;
+  height: 28px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.note-link-btn:hover {
+  background: #e0e0e0;
+}
+
+.note-anchor {
+  background: transparent;
+  scroll-margin-top: 60px;
+  display: inline !important;
+  position: relative;
+  z-index: 1;
+}
+
+.note-anchor-highlight {
+  background: #fff3cd;
+  transition: background-color 0.3s;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.note-textarea {
+  font-family: monospace;
+} 

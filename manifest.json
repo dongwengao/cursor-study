@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "我的 Chrome 插件",
+  "version": "1.0",
+  "description": "一个基础的 Chrome 插件示例",
+  "permissions": [
+    "tabs",
+    "webNavigation",
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["modal.css"],
+      "js": ["content.js"]
+    }
+  ]
+} 
