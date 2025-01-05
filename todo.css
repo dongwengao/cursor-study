@@ -1,0 +1,540 @@
+/* 待办事项页面样式 */
+body {
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.todo-modal {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.todo-header h2 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.todo-container {
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+}
+
+.todo-form-section {
+  flex: 0 0 300px;
+  position: sticky;
+  top: 20px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  height: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.todo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.todo-input,
+.todo-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.todo-input:focus,
+.todo-textarea:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.todo-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.todo-reminder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.todo-reminder-input {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.todo-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-width: 60px;
+}
+
+.todo-button.primary {
+  background: #1976d2;
+  color: white;
+}
+
+.todo-button.primary:hover {
+  background: #1565c0;
+}
+
+.todo-button.danger {
+  background: #f44336;
+  color: white;
+}
+
+.todo-button.danger:hover {
+  background: #d32f2f;
+}
+
+.todo-lists-container {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.todo-group {
+  flex: 0 0 300px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-group:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.todo-group-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+  cursor: move;
+}
+
+.todo-group-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.todo-count {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+  margin-left: auto;
+}
+
+.todo-list {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 240px);
+}
+
+.todo-item {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-left: 4px solid #4caf50;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.todo-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.todo-item.expired {
+  border-left-color: #f44336;
+  background: #fff5f5;
+}
+
+.todo-item.near-deadline {
+  border-left-color: #ff9800;
+  background: #fff8e0;
+}
+
+.todo-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.todo-details {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
+
+.todo-deadline {
+  color: #999;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.todo-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Tips 样式优化 */
+.todo-tips {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.todo-tips-icon {
+  display: inline-block;
+  background: #1976d2;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: help;
+}
+
+.todo-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 280px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  z-index: 1000;
+  margin-top: 8px;
+}
+
+.todo-tips:hover .todo-tooltip {
+  display: block;
+}
+
+.todo-tooltip-section {
+  margin-bottom: 16px;
+}
+
+.todo-tooltip-section:last-child {
+  margin-bottom: 0;
+}
+
+.todo-tooltip-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.todo-tooltip-desc {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 状态指示器样式 */
+.tooltip-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.tooltip-status:last-child {
+  margin-bottom: 0;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.status-indicator.status-expired {
+  background-color: #ffebee;
+  border: 1px solid #ef5350;
+}
+
+.status-indicator.status-urgent {
+  background-color: #fff3e0;
+  border: 1px solid #ffa726;
+}
+
+/* 添加箭头指示 */
+.todo-tooltip:before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.06);
+}
+
+/* 优先级指示器样式 */
+.priority-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.priority-high {
+  background: #f44336;
+}
+
+.priority-medium {
+  background: #ff9800;
+}
+
+.priority-low {
+  background: #4caf50;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+.todo-group-desc {
+  color: #666;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.4;
+  padding-right: 40px;
+}
+
+/* 修改滚动条样式 */
+.todo-lists-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.todo-lists-container::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.todo-lists-container::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.todo-lists-container::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 1600px) {
+  .todo-lists-container {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+/* 添加小屏幕适配 */
+@media screen and (max-width: 768px) {
+  .todo-container {
+    flex-direction: column;
+  }
+
+  .todo-form-section {
+    position: static;
+    width: 100%;
+  }
+
+  .todo-lists-container {
+    width: 100%;
+  }
+}
+
+/* 已完成任务组样式 */
+.completed-group {
+  background: #f8f9fa;
+  opacity: 0.8;
+}
+
+.completed-group .todo-item {
+  background: #f8f9fa;
+  border-left-color: #4caf50;
+  opacity: 0.8;
+}
+
+.completed-group .todo-title {
+  text-decoration: line-through;
+  color: #666;
+}
+
+.completed-group .todo-details {
+  color: #888;
+}
+
+.completed-group .todo-deadline {
+  color: #999;
+}
+
+/* 完成按钮样式 */
+.todo-toggle.completed {
+  background: #4caf50;
+}
+
+.todo-toggle.completed:hover {
+  background: #43a047;
+}
+
+/* 已过期任务组样式 */
+.expired-group {
+  background: #fff5f5;
+}
+
+.expired-group .todo-group-header {
+  background: #fff0f0;
+}
+
+.expired-group .todo-group-title {
+  color: #d32f2f;
+}
+
+.expired-group .todo-count {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.expired-group .todo-item {
+  border-left-color: #f44336;
+  background: #fff5f5;
+}
+
+.expired-group .todo-deadline {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+/* 表单中的主要按钮（添加待办事项和添加示例任务）使用更大的内边距 */
+.todo-form .todo-button {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  min-width: unset;
+  letter-spacing: 0.5px;
+}
+
+/* 并行任务按钮样式 */
+.todo-button.secondary {
+  background: #9e9e9e;
+  color: white;
+}
+
+.todo-button.secondary:hover {
+  background: #757575;
+}
+
+.todo-button.secondary.active {
+  background: #673ab7;
+  color: white;
+}
+
+.todo-button.secondary.active:hover {
+  background: #5e35b1;
+}
+
+/* 调整按钮容器的样式以适应三个按钮 */
+.todo-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* 拖拽相关样式 */
+.todo-group-header {
+  cursor: move;
+}
+
+.todo-group.dragging {
+  opacity: 0.5;
+  border: 2px dashed #1976d2;
+}
+
+.todo-group.drag-over {
+  border: 2px dashed #1976d2;
+  transform: translateY(-4px);
+} 

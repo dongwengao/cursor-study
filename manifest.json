@@ -4,23 +4,43 @@
   "version": "1.0",
   "description": "一个基础的 Chrome 插件示例",
   "permissions": [
-    "tabs",
-    "webNavigation",
     "storage",
-    "activeTab",
-    "scripting"
+    "tabs",
+    "notifications",
+    "commands",
+    "alarms",
+    "startup"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "action": {
-    "default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "css": ["modal.css"],
-      "js": ["content.js"]
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
     }
-  ]
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "todo.html",
+      "todo.css",
+      "todo.js"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "commands": {
+    "toggle_todo": {
+      "suggested_key": {
+        "default": "Alt+N"
+      },
+      "description": "打开待办事项"
+    }
+  }
 } 

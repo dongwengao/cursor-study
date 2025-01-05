@@ -1,6 +1,7 @@
 // 初始化全局变量
 let modal = null;
 let notePanel = null;
+let todoModal = null;
 
 // 添加恢复锚点的函数（移到全局作用域）
 function restoreAnchors(noteText) {
@@ -162,8 +163,12 @@ function restoreAnchors(noteText) {
 // 移除之前的 DOMContentLoaded 监听器，改用 load 事件
 window.addEventListener('load', initializeAnchors);
 
-// 创建模态框HTML
+// 修改创建模态框函数
 function createModal() {
+  if (!isFeatureEnabled('sync')) {
+    return null;
+  }
+
   const modal = document.createElement('div');
   modal.innerHTML = `
     <div class="bookmark-modal-overlay">
@@ -248,8 +253,29 @@ function createModal() {
   return overlay;
 }
 
-// 更新书签列表
+// 修改切换模态框函数
+async function toggleModal() {
+  if (!await isFeatureEnabled('sync')) {
+    return;
+  }
+
+  if (!modal) {
+    modal = createModal();
+  }
+  
+  if (modal.style.display === 'block') {
+    modal.style.display = 'none';
+  } else {
+    modal.style.display = 'block';
+    updateBookmarkList();
+  }
+}
+
+// 修改更新书签列表函数
 async function updateBookmarkList() {
+  if (!await isFeatureEnabled('sync')) {
+    return;
+  }
   const { bookmarks = [] } = await chrome.storage.local.get('bookmarks');
   const listElement = document.getElementById('bookmarkList');
   const currentUrl = window.location.href;
@@ -334,22 +360,77 @@ async function updateBookmarkList() {
   });
 }
 
-// 切换模态框显示状态
-function toggleModal() {
-  if (!modal) {
-    modal = createModal();
+// 修改消息监听器
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+  if (request.action === 'toggleModal') {
+    if (await isFeatureEnabled('sync')) {
+      toggleModal();
+    }
+  } else if (request.action === 'toggleTodoModal') {
+    if (await isFeatureEnabled('todo')) {
+      toggleTodoModal();
+    }
   }
-  
-  if (modal.style.display === 'block') {
-    modal.style.display = 'none';
-  } else {
-    modal.style.display = 'block';
-    updateBookmarkList();
+});
+
+// 修改功能开关监听器
+chrome.runtime.onMessage.addListener(async (message) => {
+  try {
+    if (message.action === 'featureToggle') {
+      const { feature, enabled } = message;
+      
+      // 处理待办事项功能
+      if (feature === 'todo' && !enabled) {
+        const todoPanel = document.querySelector('.todo-modal-overlay');
+        if (todoPanel) {
+          todoPanel.remove();
+          todoModal = null;
+        }
+      }
+      
+      // 处理笔记功能
+      if (feature === 'note' && !enabled) {
+        const notePanel = document.querySelector('.note-panel');
+        if (notePanel) {
+          notePanel.remove();
+        }
+      }
+
+      // 处理书签同步功能
+      if (feature === 'sync' && !enabled) {
+        if (modal) {
+          modal.remove();
+          modal = null;
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Feature toggle handling failed:', error);
   }
-}
+});
+
+// 修改键盘事件监听
+document.addEventListener('keydown', async function(event) {
+  if (event.altKey) {
+    if (event.key.toLowerCase() === 'q') {
+      event.preventDefault();
+      if (await isFeatureEnabled('sync')) {
+        toggleModal();
+      }
+    } else if (event.key.toLowerCase() === 'w') {
+      event.preventDefault();
+      if (await isFeatureEnabled('note')) {
+        toggleNotePanel();
+      }
+    }
+  }
+});
 
 // 创建笔记面板
 function createNotePanel() {
+  if (!isFeatureEnabled('note')) {
+    return null;
+  }
   const panel = document.createElement('div');
   panel.className = 'note-panel';
   panel.innerHTML = `
@@ -576,7 +657,11 @@ function createNotePanel() {
 }
 
 // 切换笔记面板
-function toggleNotePanel() {
+async function toggleNotePanel() {
+  if (!await isFeatureEnabled('note')) {
+    return;
+  }
+
   if (!notePanel) {
     notePanel = createNotePanel();
   }
@@ -587,22 +672,145 @@ function toggleNotePanel() {
   }
 }
 
-// 监听键盘事件（只保留一个）
-document.addEventListener('keydown', function(event) {
-  if (event.altKey) {
-    if (event.key.toLowerCase() === 'q') {
-      event.preventDefault();
-      toggleModal();
-    } else if (event.key.toLowerCase() === 'w') {
-      event.preventDefault();
-      toggleNotePanel();
+// 保留通知相关的功能
+async function checkDeadlines() {
+  try {
+    // 检查扩展是否可用
+    if (!chrome.runtime?.id) {
+      console.log('Extension context invalidated');
+      return;
+    }
+
+    const { todos = [], lastNotified = {} } = await chrome.storage.local.get(['todos', 'lastNotified']);
+    const now = Date.now();
+
+    for (const todo of todos) {
+      const timeToDeadline = todo.deadline - now;
+      const reminderTime = todo.reminderMinutes * 60 * 1000;
+      
+      if (timeToDeadline > 0 && timeToDeadline <= reminderTime) {
+        const lastNotifyTime = lastNotified[todo.id] || 0;
+        const timeSinceLastNotify = now - lastNotifyTime;
+        
+        if (!lastNotifyTime || timeSinceLastNotify >= 15 * 60 * 1000) {
+          try {
+            await chrome.runtime.sendMessage({
+              action: 'createNotification',
+              todo: {
+                id: todo.id,
+                title: todo.title,
+                timeLeft: Math.floor(timeToDeadline / (60 * 1000))
+              }
+            });
+
+            lastNotified[todo.id] = now;
+            await chrome.storage.local.set({ lastNotified });
+          } catch (error) {
+            console.log('Failed to send notification:', error);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Error checking deadlines:', error);
+    // 如果扩展上下文失效，清除定时器
+    if (!chrome.runtime?.id) {
+      clearInterval(window.deadlineCheckInterval);
+    }
+  }
+}
+
+// 更频繁地检查截止时间
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    checkDeadlines();
+    // 保存定时器ID以便后续清除
+    window.deadlineCheckInterval = setInterval(() => {
+      if (chrome.runtime?.id) {
+        checkDeadlines();
+      } else {
+        clearInterval(window.deadlineCheckInterval);
+      }
+    }, 5 * 60 * 1000);
+  } catch (error) {
+    console.log('Failed to initialize deadline checker:', error);
+  }
+});
+
+// 页面加载时初始化功能
+window.addEventListener('load', async () => {
+  try {
+    // 初始化待办事项功能
+    if (await isFeatureEnabled('todo')) {
+      checkDeadlines();
+      setInterval(checkDeadlines, 5 * 60 * 1000);
+    }
+
+    // 初始化笔记功能
+    if (await isFeatureEnabled('note')) {
+      const { notes = {} } = await chrome.storage.local.get('notes');
+      const currentUrl = window.location.href;
+      if (notes[currentUrl]) {
+        restoreAnchors(notes[currentUrl]);
+      }
+    }
+  } catch (error) {
+    console.log('Extension initialization failed:', error);
+  }
+});
+
+// 检查功能是否启用
+async function isFeatureEnabled(feature) {
+  try {
+    const { features = {} } = await chrome.storage.local.get('features');
+    return features[feature] !== false;
+  } catch (error) {
+    console.log('Extension context invalidated, feature check failed:', error);
+    return false;  // 当扩展上下文无效时，默认禁用功能
+  }
+}
+
+// 监听快捷键
+chrome.runtime.onMessage.addListener(async (message) => {
+  if (message.action === 'toggleTodoModal') {
+    if (await isFeatureEnabled('todo')) {
+      toggleTodoModal();
     }
   }
 });
 
-// 监听来自扩展的消息
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'toggleModal') {
-    toggleModal();
+// 监听功能开关变化
+chrome.runtime.onMessage.addListener(async (message) => {
+  try {
+    if (message.action === 'featureToggle') {
+      const { feature, enabled } = message;
+      
+      // 处理待办事项功能
+      if (feature === 'todo' && !enabled) {
+        const todoPanel = document.querySelector('.todo-modal-overlay');
+        if (todoPanel) {
+          todoPanel.remove();
+          todoModal = null;
+        }
+      }
+      
+      // 处理笔记功能
+      if (feature === 'note' && !enabled) {
+        const notePanel = document.querySelector('.note-panel');
+        if (notePanel) {
+          notePanel.remove();
+        }
+      }
+
+      // 处理书签同步功能
+      if (feature === 'sync' && !enabled) {
+        if (modal) {
+          modal.remove();
+          modal = null;
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Feature toggle handling failed:', error);
   }
 }); 

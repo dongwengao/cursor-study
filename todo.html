@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>待办事项</title>
+  <link rel="stylesheet" href="todo.css">
+</head>
+<body>
+  <div class="todo-modal">
+    <div class="todo-header">
+      <h2>待办事项</h2>
+      <div class="todo-tips">
+        <span class="todo-tips-icon">tips</span>
+        <div class="todo-tooltip">
+          <div class="todo-tooltip-section">
+            <div class="todo-tooltip-title">任务状态</div>
+            <div class="todo-tooltip-desc">
+              <div class="tooltip-status">
+                <span class="status-indicator status-expired"></span>
+                红色背景：已过期任务
+              </div>
+              <div class="tooltip-status">
+                <span class="status-indicator status-urgent"></span>
+                黄色背景：24小时内到期
+              </div>
+            </div>
+          </div>
+          <div class="todo-tooltip-section">
+            <div class="todo-tooltip-title">任务分类</div>
+            <div class="todo-tooltip-desc">
+              紧急任务：2天内需要完成<br>
+              普通任务：2-7天内需要完成<br>
+              未来任务：7天后需要完成<br>
+              并行任务：可以与其他任务同时进行
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="todo-modal-content">
+      <div class="todo-container">
+        <div class="todo-form-section">
+          <div class="todo-form">
+            <input type="text" class="todo-input" placeholder="标题" id="todoTitle">
+            <textarea class="todo-textarea" placeholder="详细内容" id="todoDetails"></textarea>
+            <input type="datetime-local" class="todo-input" id="todoDeadline">
+            <div class="todo-reminder">
+              <input type="number" class="todo-reminder-input" id="todoReminder" min="1" value="60">
+              <span class="todo-reminder-label">分钟前提醒</span>
+            </div>
+            <button class="todo-button primary" id="addTodo">添加待办事项</button>
+          </div>
+        </div>
+        <div class="todo-lists-container">
+          <!-- 已过期任务 -->
+          <div class="todo-group expired-group" draggable="true" data-group="expired">
+            <div class="todo-group-header">
+              <h3 class="todo-group-title">
+                已过期
+                <span class="todo-count">0</span>
+              </h3>
+              <div class="todo-group-desc">已过期的任务</div>
+            </div>
+            <div class="todo-list" id="expiredList"></div>
+          </div>
+
+          <!-- 紧急任务：2天内需要完成 -->
+          <div class="todo-group" draggable="true" data-group="urgent">
+            <div class="todo-group-header">
+              <h3 class="todo-group-title">
+                紧急任务
+                <span class="todo-count">0</span>
+              </h3>
+              <div class="todo-group-desc">2天内需要完成</div>
+            </div>
+            <div class="todo-list" id="urgentList"></div>
+          </div>
+
+          <!-- 普通任务：2-7天内需要完成 -->
+          <div class="todo-group" draggable="true" data-group="normal">
+            <div class="todo-group-header">
+              <h3 class="todo-group-title">
+                普通任务
+                <span class="todo-count">0</span>
+              </h3>
+              <div class="todo-group-desc">2-7天内需要完成</div>
+            </div>
+            <div class="todo-list" id="normalList"></div>
+          </div>
+
+          <!-- 未来任务：7天后需要完成 -->
+          <div class="todo-group" draggable="true" data-group="future">
+            <div class="todo-group-header">
+              <h3 class="todo-group-title">
+                未来任务
+                <span class="todo-count">0</span>
+              </h3>
+              <div class="todo-group-desc">7天后需要完成</div>
+            </div>
+            <div class="todo-list" id="futureList"></div>
+          </div>
+
+          <!-- 并行任务：可以与其他任务同时进行 -->
+          <div class="todo-group" draggable="true" data-group="parallel">
+            <div class="todo-group-header">
+              <h3 class="todo-group-title">
+                并行任务
+                <span class="todo-count">0</span>
+              </h3>
+              <div class="todo-group-desc">可以与其他任务同时进行</div>
+            </div>
+            <div class="todo-list" id="parallelList"></div>
+          </div>
+
+          <!-- 已完成任务 -->
+          <div class="todo-group completed-group" draggable="true" data-group="completed">
+            <div class="todo-group-header">
+              <h3 class="todo-group-title">
+                已完成
+                <span class="todo-count">0</span>
+              </h3>
+              <div class="todo-group-desc">已完成的任务</div>
+            </div>
+            <div class="todo-list" id="completedList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="todo.js"></script>
+</body>
+</html> 
